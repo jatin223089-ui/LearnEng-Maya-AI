@@ -797,6 +797,7 @@ async def health():
         "ok": db_ok and not key_err,
         "database": store.backend_name(),
         "database_ok": db_ok,
+        "database_error": store.backend_error() or None,
         "gemini_configured": bool(api_key) and not key_err,
         "gemini_error": key_err or None,
         "live_model": os.environ.get("LIVE_MODEL", LIVE_MODEL),

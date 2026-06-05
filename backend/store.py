@@ -1,6 +1,7 @@
 """Data store — Postgres (Supabase) when DATABASE_URL is set, else MongoDB."""
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
@@ -16,10 +17,12 @@ _backend: str = "none"
 _pg_pool = None
 _mongo_client = None
 _mongo_db = None
+_last_db_error: str | None = None
 
 
 async def init_store() -> str:
-    global _backend, _pg_pool, _mongo_client, _mongo_db
+    global _backend, _pg_pool, _mongo_client, _mongo_db, _last_db_error
+    _last_db_error = None
     if DATABASE_URL:
         try:
             import asyncpg
@@ -32,19 +35,24 @@ async def init_store() -> str:
             return _backend
         except Exception as exc:
             logger.error("Postgres unavailable (%s), falling back to MongoDB", exc)
-    try:
-        from motor.motor_asyncio import AsyncIOMotorClient
+    for attempt in range(3):
+        try:
+            from motor.motor_asyncio import AsyncIOMotorClient
 
-        _mongo_client = AsyncIOMotorClient(MONGO_URL)
-        _mongo_db = _mongo_client[DB_NAME]
-        await _mongo_client.admin.command("ping")
-        _backend = "mongo"
-        logger.info("Using MongoDB store at %s", MONGO_URL)
-        return _backend
-    except Exception as exc:
-        logger.error("MongoDB unavailable: %s", exc)
-        _backend = "none"
-        return _backend
+            _mongo_client = AsyncIOMotorClient(MONGO_URL, serverSelectionTimeoutMS=5000)
+            _mongo_db = _mongo_client[DB_NAME]
+            await _mongo_client.admin.command("ping")
+            _backend = "mongo"
+            _last_db_error = None
+            logger.info("Using MongoDB store at %s", MONGO_URL)
+            return _backend
+        except Exception as exc:
+            _last_db_error = str(exc)
+            logger.error("MongoDB unavailable (attempt %d/3): %s", attempt + 1, exc)
+            if attempt < 2:
+                await asyncio.sleep(2)
+    _backend = "none"
+    return _backend
 
 
 async def ping() -> bool:
@@ -60,6 +68,10 @@ async def ping() -> bool:
 
 def backend_name() -> str:
     return _backend
+
+
+def backend_error() -> str | None:
+    return _last_db_error
 
 
 def _row_to_dict(row) -> dict:
