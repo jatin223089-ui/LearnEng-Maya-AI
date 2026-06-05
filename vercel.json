@@ -2,14 +2,5 @@
   "version": 2,
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/build",
-  "installCommand": "cd frontend && npm install",
-  "functions": {
-    "api/index.py": {
-      "maxDuration": 60,
-      "memory": 512
-    }
-  },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index" }
-  ]
+  "installCommand": "cd frontend && npm install"
 }
