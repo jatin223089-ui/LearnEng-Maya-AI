@@ -1,0 +1,38 @@
+{
+  "summary": "Backend: 15/15 pytest tests pass (auth, scenarios, sessions atomic single-opener, chat with grammar correction + level tracking, /api/corrections list endpoint, /api/hint suggestions, voice TTS, Gemini model present in root). Frontend: full E2E verified - login → dashboard shows new tiles (vocab-link + new-session-btn) → /vocabulary lists 2 correction cards for seeded user → scenario card creates session and navigates to /call/:id → Call page renders all 5 required testids (orb, start-button, hint-button, live-caption, transcript-link) → hint button returns 3 quoted chips and renders Try-saying banner → transcript-link navigates to /transcript/:id with stored messages → legacy /chat/:id route also renders Call page → dashboard recent-sessions has both /transcript/:id and /call/:id links.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/voice/transcribe", "issue": "Not covered by pytest (requires real audio fixture). Endpoint reachable; frontend POSTs webm via FormData and works in Call.jsx."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Call page on initial load", "issues": ["Maya's opener TTS triggers automatically on mount, but browser autoplay policy may block it until first user click. Caption still renders correctly. Consider deferring auto-speak until user interacts to avoid silent first state."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_englearn_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Call.jsx ~450 lines is approaching the 700-line guideline limit but still readable; consider extracting VAD recording + TTS playback into hooks (useVAD, useTTSWithCaptions) for testability.",
+    "Call.jsx calls speakText on mount in a useEffect that depends on session messages - autoplay may be blocked in headless/restricted contexts; suggest gating auto-speak on first user gesture and showing the orb in 'idle' until then.",
+    "server.py compute_level thresholds (45/180 min) are magic numbers - consider moving to a constants module or .env for tunability.",
+    "Vocabulary page fetches /api/corrections once on mount; no refresh / pagination - acceptable for MVP but flag if list grows large.",
+    "All endpoints correctly exclude MongoDB _id; Pydantic models used throughout; JWT auth with proper 401 responses verified."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_englearn_api.py"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "test@englearn.ai / pass1234 (seeded user, has 2 historical corrections, shows as 'Test' in greeting). Fresh signup also tested per-run with random email - new users get level='Beginner' as expected.",
+  "seed_data_creation": "None required. Backend tests create users dynamically via /api/auth/signup. Frontend test uses pre-existing seeded user.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Pytest file at /app/backend/tests/test_englearn_api.py - run with REACT_APP_BACKEND_URL exported (it's NOT in shell env automatically; load from /app/frontend/.env). 15 tests cover all endpoints including the new /api/corrections, /api/hint, single-opener atomicity, and level compute. Playwright E2E covers Dashboard new tiles, Vocabulary, scenario→/call/:id, all CALL testids, hint chips rendering, transcript navigation, and legacy /chat/:id compat. Note: in Playwright, hint banner header 'Try saying' is uppercased via CSS to 'TRY SAYING' in innerText. The seeded user 'test@englearn.ai' in this env currently has 2 corrections and 0 prior sessions/conversations - first scenario click creates a fresh session correctly.",
+  "rca of the issue": "N/A - no blocking bugs found. All 11 features from review_request verified end-to-end."
+}

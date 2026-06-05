@@ -1,0 +1,51 @@
+{
+  "summary": "Phase A end-to-end test pass. Backend: 21/23 tests pass (15 regression + 6 new). 2 NEW tests fail because /api/chat does not return level_changed/new_level fields. Frontend: all 11 review-request flows verified working - Onboarding 3-step modal + localStorage flag, Header logged-in links (Dashboard/Vocabulary/Profile/Sign out), /profile route with 4 level cards + name input + save->dashboard redirect, /vocabulary localStorage cache populated (~850B) after first visit, MicGate modal opens on call-start, Cancel closes it cleanly, Allow sets englearn_mic_ok=1, scenario -> /call/:id navigation works.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "POST /api/chat",
+        "issue": "Response is missing the new optional fields `level_changed` (bool) and `new_level` (str|null) required by the review request. Root cause: the Pydantic `ChatMessage` model in /app/backend/server.py (lines 133-138) was NOT updated to declare these fields, so when the endpoint returns `ChatMessage(**asst_msg, level_changed=..., new_level=...)` with `response_model=ChatMessage`, FastAPI/Pydantic filters them out. Confirmed via live API: response shape is {id, role, text, correction, created_at} only. Impact: LevelUpToast on Call page can never trigger because level_changed is always undefined on the frontend.",
+        "priority": "HIGH"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Level-up toast on /call/:id",
+        "issue": "Cannot be triggered end-to-end because backend strips level_changed/new_level (see backend critical bug). LevelUpToast component itself is wired correctly in Call.jsx and will render when the field is present.",
+        "affected_selectors": ["[data-testid='level-up-toast']"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_englearn_api.py",
+    "/app/backend/tests/test_profile_and_chat_v3.py",
+    "/app/test_reports/pytest/pytest_results.xml",
+    "/app/test_reports/pytest/pytest_results_v3.xml"
+  ],
+  "action_items": [
+    "Add `level_changed: Optional[bool] = None` and `new_level: Optional[str] = None` fields to the `ChatMessage` Pydantic model in /app/backend/server.py (around line 133-138). After fix re-run /app/backend/tests/test_profile_and_chat_v3.py to confirm both failing tests pass and the LevelUpToast will then surface on level transitions."
+  ],
+  "critical_code_review_comments": [
+    "BUG: ChatMessage Pydantic model not updated when new response fields were added — caused silent stripping via response_model. Always update the model when extending response.",
+    "/api/chat is large (~75 lines) and mixes user msg persistence, history build, LLM call, correction parse, stats update, level diff. Consider extracting helpers (e.g. apply_level_update(user, word_count)) for testability.",
+    "update_streak() reads `user.get('streak', 1)` as the *current* streak fallback - using 1 instead of 0 here can silently keep streak=1 for a user who has been inactive >1 day on the first call. Consider defaulting to 0 and letting the date math produce the new streak.",
+    "Profile.jsx: Save button doesn't disable during async PUT call but it does set `saving`. Minor: pressing Enter in the name input does not submit; acceptable but could add form semantics.",
+    "Vocabulary offline-badge: in our run the badge never appeared on the 2nd visit because the network refresh finished before the assertion. Suggest a longer minimum visible duration (e.g. show for at least 300ms after hydration) so users actually notice it.",
+    "All endpoints continue to exclude MongoDB _id correctly; JWT auth + 401 paths verified for the new PUT /profile route."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_profile_and_chat_v3.py"
+  ],
+  "success_rate": {"backend": "91% (21/23 - 2 failures both caused by the same single ChatMessage model bug)", "frontend": "100%"},
+  "test_credentials": "test@englearn.ai / pass1234 (seeded). New users also created dynamically per test run.",
+  "seed_data_creation": "None. Tests self-provision users via /api/auth/signup.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Run new tests: `cd /app && export $(grep -v '^#' frontend/.env | xargs) && cd backend && python -m pytest tests/test_profile_and_chat_v3.py -v`. Once main agent adds level_changed/new_level to ChatMessage model, both currently-failing tests (test_chat_response_has_level_changed_fields, test_chat_no_level_change_second_message) should pass. Frontend Playwright already verified all 11 review-request flows. To retest LevelUpToast end-to-end after fix: log in seeded user, PUT /profile to Advanced via UI, start a /call, send any chat message - the data-testid='level-up-toast' should appear.",
+  "rca of the issue": "Pydantic V2's `response_model=ChatMessage` performs strict serialization: any kwargs passed to ChatMessage(...) that aren't declared as model fields are silently dropped (model_config.extra defaults to 'ignore'). The chat endpoint correctly computes level_changed and new_level and tries to return them, but the model class definition was not updated. Fix: add the two Optional fields to ChatMessage with default None. No DB changes required; no schema migration needed."
+}

@@ -1,0 +1,29 @@
+{
+  "summary": "Backend retest after ChatMessage Pydantic fix. Ran full /app/backend/tests/test_profile_and_chat_v3.py suite (8 tests). All 8 PASS, including the two previously failing chat tests: test_chat_response_has_level_changed_fields and test_chat_no_level_change_second_message. POST /api/chat now returns ChatMessage with level_changed (bool) and new_level (str|null) populated. First /chat after switching preferred_level from Beginner -> Advanced correctly returns level_changed=true, new_level='Advanced'. Second /chat returns level_changed=false, new_level=null. /auth/me reflects level=Advanced and increments minutes_practiced. Frontend wiring verified by static inspection: Call.jsx reads r.data.level_changed/new_level and calls setLevelUp; LevelUpToast component renders with data-testid='level-up-toast' (component at /app/frontend/src/components/LevelUpToast.jsx line 31).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_profile_and_chat_v3.py",
+    "/app/test_reports/pytest/iter4_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "ChatMessage Pydantic model now correctly exposes level_changed and new_level optional fields - confirmed via passing tests.",
+    "Test file uses os.environ['REACT_APP_BACKEND_URL'] which raises KeyError if not exported; runs require the env var to be passed. Consider sourcing /app/frontend/.env in a conftest.py for ergonomics (non-blocking)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "n/a (backend-only retest)"},
+  "test_credentials": "test@englearn.ai / pass1234 (not needed; tests create fresh users via /auth/signup)",
+  "seed_data_creation": "Each test module creates a fresh user via /auth/signup with email pattern test_profile_<uuid>@englearn.ai. No manual seed required.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Run with: REACT_APP_BACKEND_URL=<url> pytest /app/backend/tests/test_profile_and_chat_v3.py -v. All 8 tests pass in ~3.6s. ChatMessage now includes level_changed/new_level fields. Frontend LevelUpToast is wired in Call.jsx (lines 36, 201-202, 360) and component carries data-testid='level-up-toast'.",
+  "rca of the issue": "Previous failure root cause was ChatMessage Pydantic model missing level_changed/new_level fields, causing those keys to be stripped from the serialized response. Fix in server.py (lines 133-140) added the two optional fields, restoring proper response shape."
+}

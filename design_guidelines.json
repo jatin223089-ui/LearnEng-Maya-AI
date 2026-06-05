@@ -1,0 +1,155 @@
+{
+  "project_name": "EngLearn.ai",
+  "ai_tutor_name": "Maya",
+  "theme": {
+    "archetype": "1 (Organic & Earthy) blended with 4 (Swiss & High-Contrast)",
+    "mode": "light",
+    "description": "A warm, premium, and human-centric design that avoids the sterile 'tech-bro' look and the childish gamified aesthetic. It feels like a high-end language academy combined with cutting-edge AI. The interface uses generous spacing, organic earthy colors, and sharp typography to build trust and calmness."
+  },
+  "typography": {
+    "headings": {
+      "family": "Outfit, sans-serif",
+      "weights": ["400", "500", "700"],
+      "usage": "Expressive, geometric but friendly. Used for H1-H4. Must use tracking-tight for large sizes."
+    },
+    "body": {
+      "family": "Fira Sans, sans-serif",
+      "weights": ["400", "500"],
+      "usage": "Highly legible, slightly technical for grammar explanations and transcripts."
+    },
+    "mono": {
+      "family": "JetBrains Mono, monospace",
+      "weights": ["400"],
+      "usage": "Used for grammar correction tokens, phonetic spellings, and vocabulary badges."
+    },
+    "hierarchy_rules": [
+      "H1 (Hero): text-5xl md:text-6xl tracking-tighter leading-none font-medium text-charcoal",
+      "H2 (Section): text-3xl md:text-4xl tracking-tight leading-tight font-medium text-charcoal",
+      "H3 (Card Title): text-xl md:text-2xl font-medium",
+      "Body: text-base leading-relaxed text-charcoal-muted",
+      "Overline/Labels: text-xs uppercase tracking-[0.2em] font-medium text-sage"
+    ]
+  },
+  "colors": {
+    "background": {
+      "base": "#F9F8F6",
+      "surface": "#FFFFFF",
+      "surface_elevated": "#F0EFEA"
+    },
+    "text": {
+      "primary": "#1A1C19",
+      "secondary": "#6B7068",
+      "inverse": "#F9F8F6"
+    },
+    "brand": {
+      "primary": "#C85A47",
+      "primary_hover": "#B34A38",
+      "sage": "#4A5D4E",
+      "sage_light": "#E8EBE9"
+    },
+    "feedback": {
+      "correct": "#4A5D4E",
+      "correction_bg": "#FBEAE7",
+      "correction_text": "#C85A47",
+      "highlight": "#FCECC9"
+    },
+    "rules": [
+      "Never use pure black or pure white. All neutrals are tinted with warmth.",
+      "Primary (Terracotta) is reserved strictly for primary CTAs and Maya's voice interactions.",
+      "Sage is used for progress, successful states, and secondary structural elements."
+    ]
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous Spacing. Use 2-3x more spacing than typical designs. Use p-8 or p-12 for containers.",
+    "grids": {
+      "marketing": "Asymmetric Bento grids. grid-cols-1 md:grid-cols-12 with gap-8. Mix tall and wide blocks.",
+      "dashboard": "Strict, dense grids for analytics. grid-cols-1 md:grid-cols-4 with gap-6. Use h-full to align bottoms."
+    },
+    "surfaces": {
+      "cards": "Flat background (surface), 1px solid border (#E5E4E0), no shadow by default. Hover adds subtle translate-y and soft ambient shadow.",
+      "glass": "Used only for sticky header. backdrop-blur-xl bg-white/70, 1px border-b border-white/20."
+    }
+  },
+  "components": {
+    "buttons": "Pill-shaped (rounded-full) for primary actions. Geometric (rounded-md) for secondary/utility actions. Always explicitly set hover text colors.",
+    "chat_interface": {
+      "style": "Flowing transcript rather than generic iMessage bubbles.",
+      "maya_message": "Left-aligned, larger text (text-xl or text-2xl), serif or elegant sans, accompanied by a subtle breathing orb visualizer.",
+      "user_message": "Right-aligned, standard text. Grammar mistakes are struck through with inline corrections appearing above them in mono font.",
+      "input_area": "Voice-first. A large, prominent, pulsating Terracotta microphone button centered at the bottom, surrounded by minimal text input options."
+    },
+    "scenario_cards": {
+      "style": "Large interactive cards featuring the 3D diorama images. 1px border, off-white background. On hover, the image scales up slightly (scale-105) and border turns Sage."
+    },
+    "grammar_panel": {
+      "style": "A side-drawer or floating panel (glassmorphism or solid surface) that breaks down the user's last spoken sentence. Uses mono-spaced tags for parts of speech."
+    }
+  },
+  "motion_and_animations": {
+    "voice_orb": "Maya's representation. A CSS/Framer-motion element that uses box-shadow (multiple layers) and scale to simulate 'breathing' when idle, and rapid pulsing when speaking.",
+    "page_transitions": "Soft fade and slight upward translation (y: 20 -> 0, opacity: 0 -> 1) staggered for grid items.",
+    "hover_states": "Cards lift -translate-y-1 with transition-transform 0.3s ease-out. Buttons use background color transitions.",
+    "waveform": "When the user speaks, use a canvas or CSS-animated bar visualizer tied to mock audio input levels."
+  },
+  "image_urls": {
+    "hero_visual": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/0a29f99a-786b-4b8f-825e-2a7efca37111/images/12371753ec398929582e8bdbfdae6d57a77150b7d0724bd15ecd144b8b33f1ef.png",
+      "description": "Minimalist 3D soft sphere representing Maya the AI. Use in the hero section.",
+      "category": "hero"
+    },
+    "feature_grammar": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/0a29f99a-786b-4b8f-825e-2a7efca37111/images/5753e36fc4fc1d0e0117e0c9aa2480ca83ea6d6755d9fa7b86f0ae54d29ad6f8.png",
+      "description": "3D abstract composition of speech bubbles. Use in the 'How it works' or features section.",
+      "category": "feature"
+    },
+    "scenario_cafe": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/0a29f99a-786b-4b8f-825e-2a7efca37111/images/9816583c35fbfb49fab0cd7eebf5d37087128a9b2b7aa2e6e2058b83de80740f.png",
+      "description": "3D diorama of a modern cafe scene. Use for the 'Order at a Cafe' roleplay scenario card.",
+      "category": "scenario_card"
+    },
+    "scenario_interview": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/0a29f99a-786b-4b8f-825e-2a7efca37111/images/c03408c443f04199b5178d21aebf270d4d15c176b8ab80ec55d64eb2038639a1.png",
+      "description": "3D diorama of an office room. Use for the 'Job Interview' roleplay scenario card.",
+      "category": "scenario_card"
+    },
+    "testimonials": [
+      {
+        "url": "https://images.unsplash.com/photo-1745197375167-884c1ab268cb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwzfHxzbWlsaW5nJTIwZGl2ZXJzZSUyMHN0dWRlbnQlMjBwb3J0cmFpdCUyMGZhY2V8ZW58MHx8fHwxNzgwMzc1MTQwfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Smiling student 1",
+        "category": "testimonial_avatar"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1662850886700-4ec19bd30d11?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwxfHxzbWlsaW5nJTIwZGl2ZXJzZSUyMHN0dWRlbnQlMjBwb3J0cmFpdCUyMGZhY2V8ZW58MHx8fHwxNzgwMzc1MTQwfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Smiling student 2",
+        "category": "testimonial_avatar"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1758874384753-b9672af6b063?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHw0fHx0ZWNoJTIwc3RhcnR1cCUyMHNwb25zb3IlMjBsb2dvJTIwbWluaW1hbHxlbnwwfHx8fDE3ODAzNzUxNDB8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Smiling student 3",
+        "category": "testimonial_avatar"
+      }
+    ],
+    "logos": [
+      {
+        "url": "https://images.unsplash.com/photo-1549706844-30ea8cad811b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTV8MHwxfHNlYXJjaHw0fHx0ZWNoJTIwc3RhcnR1cCUyMHNwb25zb3IlMjBsb2dvJTIwbWluaW1hbHxlbnwwfHx8fDE3ODAzNzUxNDB8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Unsplash minimal logo",
+        "category": "trusted_by_logo"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1631584713397-ab861e53bf46?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTV8MHwxfHNlYXJjaHwyfHx0ZWNoJTIwc3RhcnR1cCUyMHNwb25zb3IlMjBsb2dvJTIwbWluaW1hbHxlbnwwfHx8fDE3ODAzNzUxNDB8MA&ixlib=rb-4.1.0&q=85",
+        "description": "The Space minimal logo",
+        "category": "trusted_by_logo"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Install and use `framer-motion` for the voice orb animations, page transitions, and scenario card hover effects.",
+    "Use pure Tailwind CSS for the marketing landing page layout, avoiding rigid Shadcn layouts to achieve organic asymmetry.",
+    "For the Chat UI, do NOT use generic chat bubbles. Create a seamless, flowing transcript layout where the AI's text feels prominent and the user's text displays real-time inline corrections.",
+    "Implement the Dashboard using Shadcn UI components (tabs, cards) but override default border-radii and shadows to match the 'flat with 1px border' rule.",
+    "Add 'data-testid' to all interactive elements (e.g., 'data-testid=\"start-chat-btn\"').",
+    "Ensure the hero section uses the `hero_voice_orb` image prominently, perhaps partially cropped or floating next to the main H1.",
+    "In the Scenario picker, use the `scenario_cafe` and `scenario_interview` images in beautiful large cards with an aspect ratio of 16:9 or 4:3.",
+    "The fonts (Outfit and Fira Sans) must be imported from Google Fonts in the index.html or global css."
+  ]
+}

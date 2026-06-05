@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-base: #F9F8F6;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F0EFEA;
+  --text-primary: #1A1C19;
+  --text-secondary: #6B7068;
+  --text-inverse: #F9F8F6;
+  --brand-terracotta: #C85A47;
+  --brand-terracotta-hover: #B34A38;
+  --brand-sage: #4A5D4E;
+  --brand-sage-light: #E8EBE9;
+  --correction-bg: #FBEAE7;
+  --correction-text: #C85A47;
+  --highlight: #FCECC9;
+  --border-soft: #E5E4E0;
+}
+
+body {
+  margin: 0;
+  font-family: 'Fira Sans', sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.font-mono-tag {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+@layer base {
+  :root {
+    --background: 40 23% 97%;
+    --foreground: 90 6% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 90 6% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 90 6% 11%;
+    --primary: 10 56% 53%;
+    --primary-foreground: 40 23% 97%;
+    --secondary: 120 7% 91%;
+    --secondary-foreground: 90 6% 11%;
+    --muted: 40 12% 92%;
+    --muted-foreground: 100 4% 43%;
+    --accent: 120 7% 91%;
+    --accent-foreground: 90 6% 11%;
+    --destructive: 0 75% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 40 10% 88%;
+    --input: 40 10% 88%;
+    --ring: 10 56% 53%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+}
+
+/* ============== Maya Voice Orb ============== */
+.maya-orb {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 30%, #FBC5B0 0%, #E58B6E 40%, #C85A47 75%, #8C3B2B 100%);
+  box-shadow:
+    inset -20px -30px 60px rgba(70, 25, 15, 0.4),
+    inset 20px 25px 50px rgba(255, 220, 200, 0.45),
+    0 30px 80px -10px rgba(200, 90, 71, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: orb-breath 4.5s ease-in-out infinite;
+}
+.maya-orb::after {
+  content: '';
+  position: absolute;
+  inset: -40px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(200,90,71,0.25) 0%, transparent 60%);
+  filter: blur(20px);
+  z-index: -1;
+  animation: orb-glow 4.5s ease-in-out infinite;
+}
+.maya-orb.speaking { animation: orb-speak 0.8s ease-in-out infinite; }
+.maya-orb.listening { animation: orb-listen 1.2s ease-in-out infinite; }
+
+@keyframes orb-breath {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+@keyframes orb-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes orb-speak {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.06); }
+  50% { transform: scale(0.98); }
+  75% { transform: scale(1.04); }
+}
+@keyframes orb-listen {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(200,90,71,0.6), inset -20px -30px 60px rgba(70,25,15,0.4), inset 20px 25px 50px rgba(255,220,200,0.45); }
+  50% { transform: scale(1.03); box-shadow: 0 0 0 30px rgba(200,90,71,0), inset -20px -30px 60px rgba(70,25,15,0.4), inset 20px 25px 50px rgba(255,220,200,0.45); }
+}
+
+/* ============== Waveform bars ============== */
+.wave-bar {
+  display: inline-block;
+  width: 4px;
+  margin: 0 2px;
+  background: var(--brand-terracotta);
+  border-radius: 2px;
+  animation: wave 1s ease-in-out infinite;
+}
+.wave-bar:nth-child(2) { animation-delay: 0.1s; }
+.wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.wave-bar:nth-child(4) { animation-delay: 0.3s; }
+.wave-bar:nth-child(5) { animation-delay: 0.4s; }
+@keyframes wave {
+  0%, 100% { height: 10px; }
+  50% { height: 28px; }
+}
+
+/* Asymmetric floating shapes */
+.float-shape {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(40px);
+  opacity: 0.5;
+  animation: float-slow 12s ease-in-out infinite;
+}
+@keyframes float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 30px) scale(0.95); }
+}
+
+/* Marquee */
+.marquee { display: flex; animation: marquee 30s linear infinite; }
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Smooth scrollbars in chat */
+.chat-scroll::-webkit-scrollbar { width: 6px; }
+.chat-scroll::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 3px; }
+
+/* Page entrance */
+.fade-up { animation: fade-up 0.6s ease-out both; }
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}

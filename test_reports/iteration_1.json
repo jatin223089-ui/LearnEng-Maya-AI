@@ -1,0 +1,42 @@
+{
+  "summary": "End-to-end backend + frontend testing of EngLearn.ai. 11/11 pytest backend tests passed (auth, scenarios, sessions, chat with grammar correction, TTS). Frontend signup -> dashboard -> scenario card -> chat happy path works fully: Maya replies and the terracotta GENTLE CORRECTION block renders with original/corrected/tip for 'I go to school yesterday'.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/voice/transcribe", "issue": "Not tested via pytest (needs real audio upload); endpoint reachable, frontend posts webm. Recommend a small fixture audio file in future runs."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Chat page Maya orb", "issue": "data-testid=\"maya-orb\" not found on the orb element (count=0). Orb is visually rendered correctly but lacks the documented testid.", "selector": "[data-testid=\"maya-orb\"]", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Chat transcript", "issues": ["Two near-duplicate Maya greeting bubbles appear before the user's first message (initial greeting is re-rendered). Cosmetic but noticeable."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_englearn_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Add data-testid=\"maya-orb\" to the orb element on Chat page",
+    "Investigate duplicate initial Maya greeting in chat transcript",
+    "Optional: add an STT fixture audio file for /api/voice/transcribe coverage"
+  ],
+  "critical_code_review_comments": [
+    "server.py /api/chat builds an unused first LlmChat with history replay then creates a second LlmChat for the real call - dead code that wastes LLM tokens/time. Remove the first chat_client block.",
+    "server.py: 5xx detail strings include raw exception text from LLM/TTS calls; consider sanitising before returning to clients.",
+    "JWT secret has a sensible default but exp uses naive UTC via timezone-aware datetimes (OK). No refresh endpoint - acceptable for MVP."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_englearn_api.py"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "95%"},
+  "test_credentials": "Dynamic signup per run (uitest_<ts>@englearn.ai / pass1234). Seeded user from memory: test@englearn.ai / pass1234 (not pre-created in DB; created on demand).",
+  "seed_data_creation": "Each backend test run creates a fresh user via /api/auth/signup; no manual seed required.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Pytest file at /app/backend/tests/test_englearn_api.py covers full happy path including Claude grammar correction and OpenAI TTS - keep using REACT_APP_BACKEND_URL env. Frontend chat happy path verified manually with Playwright: signup -> dashboard -> click 'Free Talk' scenario card -> /chat/:id -> send 'I go to school yesterday' -> assert GENTLE CORRECTION block appears. Maya orb element lacks data-testid=\"maya-orb\".",
+  "rca of the issue": "N/A - no blocking bugs found."
+}

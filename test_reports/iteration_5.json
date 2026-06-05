@@ -1,0 +1,34 @@
+{
+  "summary": "Phase B (Gemini Live + pronunciation + mode picker) full test. Created /app/backend/tests/test_phase_b_live.py with 5 tests covering pronunciation endpoint shape/auth and WS handshake (valid token + invalid token + unknown session). All 5 Phase B + 23 regression tests PASS (28/28). Backend logs show no startup ERRORs, streak_reset_loop task created on @app.on_event('startup'). Frontend e2e via Playwright: login -> dashboard-mode-picker visible, mode-live sets localStorage englearn_call_mode='live', scenario card -> /live/{id}; LiveCall page exposes livecall-orb, livecall-start, livecall-back, livecall-transcript-link; clicking start triggers WS attempt with 0 JS pageerrors (mic denial handled gracefully -> 'CALL ENDED' state). Switching back to mode-classic routes scenario to /call/{id}. Both modes verified.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_phase_b_live.py",
+    "/app/backend/tests/test_englearn_api.py",
+    "/app/backend/tests/test_profile_and_chat_v3.py",
+    "/app/test_reports/pytest/iter5_phaseb.xml",
+    "/app/test_reports/pytest/iter5_regression.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "WS route /api/ws/maya/{session_id} correctly handles invalid token + unknown session with structured {type:'error', message:...} payloads and clean close (verified).",
+    "POST /api/pronunciation returns {word, tip, score} with score in 0-100 range. Could optionally add input length validation (very long text) but not blocking.",
+    "Frontend Dashboard mode picker correctly persists choice via localStorage 'englearn_call_mode' and conditionally routes scenario click to /live/:id vs /call/:id.",
+    "LiveCall page handles getUserMedia denial gracefully -> shows 'CALL ENDED' state without throwing uncaught JS exceptions; useLiveAudio cleanly aborts."
+  ],
+  "updated_files": ["/app/backend/tests/test_phase_b_live.py"],
+  "success_rate": {"backend": "100% (28/28)", "frontend": "100% (all required testids + flows)"},
+  "test_credentials": "test@englearn.ai / pass1234 (existing seeded user); Phase B tests also create fresh users via /auth/signup",
+  "seed_data_creation": "Each test creates fresh users via /auth/signup; no DB mutation required.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Run: REACT_APP_BACKEND_URL=<url> pytest /app/backend/tests/ -v. All 28 tests pass in ~12s. test_phase_b_live.py covers pronunciation + WS. For UI testing, pre-set localStorage 'englearn_onboarded_v1'='1' before navigating to /dashboard to skip the onboarding overlay that otherwise blocks scenario card clicks.",
+  "rca of the issue": "No bugs found. Initial Playwright run failed because Onboarding overlay (data-testid='onboarding-overlay') with skip button data-testid='onboarding-skip' intercepts pointer events on first visit. Workaround: set localStorage key 'englearn_onboarded_v1'='1' before login OR click onboarding-skip. Not a product bug."
+}
